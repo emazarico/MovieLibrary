@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html,
+  body {
+    min-height: 100dvh;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.font-serif-display {
+  font-family: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+}
+
+.font-sans-ui {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Subtle custom scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(120, 113, 108, 0.25);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 113, 108, 0.45);
+}
+
+/* 3D Cinema Poster Card Effects */
+.movie-poster-stage {
+  perspective: 900px;
+}
+
+.movie-poster-3d {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow:
+    0 8px 18px -5px rgba(28, 25, 23, 0.3),
+    0 1px 0 0 rgba(255, 255, 255, 0.28) inset;
+}
+
+.dark .movie-poster-3d {
+  box-shadow:
+    0 10px 22px -4px rgba(0, 0, 0, 0.65),
+    0 1px 0 0 rgba(255, 255, 255, 0.14) inset;
+}
+
+.group:hover .movie-poster-3d,
+.movie-poster-3d:hover {
+  transform: rotateY(-8deg) rotateX(2deg) translateY(-4px) scale(1.025);
+  box-shadow:
+    10px 16px 26px -6px rgba(28, 25, 23, 0.38),
+    0 1px 0 0 rgba(255, 255, 255, 0.35) inset;
+}
+
+.dark .group:hover .movie-poster-3d,
+.dark .movie-poster-3d:hover {
+  box-shadow:
+    10px 18px 30px -6px rgba(0, 0, 0, 0.8),
+    0 1px 0 0 rgba(255, 255, 255, 0.2) inset;
+}
+
+.poster-gloss {
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.04) 28%,
+    transparent 52%,
+    rgba(0, 0, 0, 0.16) 100%
+  );
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+.animate-shake {
+  animation: shake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlideUp 220ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie-poster-3d,
+  .group:hover .movie-poster-3d,
+  .movie-poster-3d:hover {
+    transform: none;
+    transition: none;
+  }
+  .animate-shake,
+  .animate-fade-slide {
+    animation: none;
+  }
+}
+
+/* Print / PDF Export Styling */
+.print-avoid-break {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1c1917 !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

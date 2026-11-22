@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="10" y1="6" x2="118" y2="122" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E11D48" />
+      <stop offset="55%" stop-color="#9F1239" />
+      <stop offset="100%" stop-color="#1E1B4B" />
+    </linearGradient>
+    <linearGradient id="slate" x1="28" y1="42" x2="100" y2="102" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFBEB" />
+      <stop offset="100%" stop-color="#FDE68A" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)" />
+  <!-- Clapper top bar -->
+  <path
+    d="M28 40L96 26C99.3 25.3 102.5 27.4 103.2 30.7L105 39.2L30 54.8L28 45.2C27.4 42.1 25.1 40.6 28 40Z"
+    fill="#FBBF24"
+  />
+  <path d="M40 37.5L47 51M58 33.8L65 47.3M76 30L83 43.5" stroke="#9F1239" stroke-width="4" stroke-linecap="round" />
+  <!-- Cinema frame -->
+  <rect x="28" y="48" width="72" height="52" rx="10" fill="url(#slate)" opacity="0.96" />
+  <!-- Play triangle -->
+  <path d="M56 62L78 74L56 86V62Z" fill="#BE123C" />
+</svg>

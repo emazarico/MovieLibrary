@@ -1,0 +1,17 @@
+{
+  "name": "MovieLibrary",
+  "short_name": "MovieLibrary",
+  "description": "Multi-viewer household movie & series library, streaming availability finder, co-watch timeline, and Google Drive sync tracker.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#FAF8F5",
+  "theme_color": "#be123c",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
