@@ -38,6 +38,10 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ open, onClose })
   const origin =
     typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
+  const hasConnectedBefore = Boolean(
+    driveConfig.userEmail || driveConfig.lastSyncedAt || driveConfig.fileId,
+  );
+
   useEffect(() => {
     if (!open) return;
     if (!driveConfig.clientId.trim() || syncStatus === 'error') {
@@ -123,7 +127,7 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ open, onClose })
       subtitle="Sync all viewer profiles, watchlists, movies, series, and co-watch logs via movielibrary-db.json."
       maxWidthClass="max-w-lg"
     >
-      <div className="p-5 space-y-5">
+      <div className="p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] space-y-5">
         <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 space-y-3">
           <div className="flex items-center justify-between gap-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
@@ -180,6 +184,13 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ open, onClose })
             </p>
           )}
 
+          {hasConnectedBefore && (
+            <p className="text-[11px] text-stone-500 dark:text-stone-400 leading-relaxed">
+              Google keeps browser sync tokens valid for ~1 hour (saved across page reloads). Your
+              edits remain safely stored locally between syncs.
+            </p>
+          )}
+
           {syncError && (
             <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-700 dark:text-rose-300 font-medium leading-relaxed">
               {syncError}
@@ -190,15 +201,29 @@ export const CloudSyncModal: React.FC<CloudSyncModalProps> = ({ open, onClose })
         {/* Actions */}
         <div className="flex flex-wrap items-center gap-2.5">
           {!isDriveConnected ? (
-            <button
-              type="button"
-              disabled={syncStatus === 'connecting' || syncStatus === 'syncing'}
-              onClick={() => void connectGoogleDrive(syncStatus === 'token_expired' ? '' : 'consent')}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-md shadow-rose-600/20 disabled:opacity-50 cursor-pointer"
-            >
-              <Cloud className="w-4 h-4" />
-              {syncStatus === 'token_expired' ? 'Reconnect Google Drive' : 'Sign in with Google & Sync'}
-            </button>
+            <>
+              <button
+                type="button"
+                disabled={syncStatus === 'connecting' || syncStatus === 'syncing'}
+                onClick={() => void connectGoogleDrive(hasConnectedBefore ? '' : 'consent')}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-md shadow-rose-600/20 disabled:opacity-50 cursor-pointer"
+              >
+                <Cloud className="w-4 h-4" />
+                {syncStatus === 'token_expired' || hasConnectedBefore
+                  ? 'Reconnect & Sync'
+                  : 'Sign in with Google & Sync'}
+              </button>
+              {hasConnectedBefore && (
+                <button
+                  type="button"
+                  disabled={syncStatus === 'connecting' || syncStatus === 'syncing'}
+                  onClick={() => void connectGoogleDrive('select_account')}
+                  className="px-3.5 py-2.5 rounded-xl bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-200 disabled:opacity-50 cursor-pointer"
+                >
+                  Switch Account
+                </button>
+              )}
+            </>
           ) : (
             <>
               <button

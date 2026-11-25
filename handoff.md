@@ -22,7 +22,7 @@
 ├── scripts/
 │   └── render-pdf.mjs                   # Standalone Node CLI HTML/PDF renderer
 └── src/
-    ├── __tests__/                       # 15 Vitest unit & integration test suites (36 tests)
+    ├── __tests__/                       # 15 Vitest unit & integration test suites (38 tests)
     ├── components/
     │   ├── common/                      # Modal, MoviePoster, StarRating, StreamingBadges, ToastContainer
     │   ├── layout/                      # Header, MobileNav
@@ -39,7 +39,7 @@
     │   ├── importExport.ts              # Multi-format importer/exporter
     │   ├── omdb.ts                      # Optional OMDb IMDb/RT/Metascore enrichment
     │   ├── posterStore.ts               # IndexedDB custom WebP poster store (movielibrary_posters_v1)
-    │   ├── storage.ts                   # localStorage mirror, theme, session, legacy detection
+    │   ├── storage.ts                   # localStorage mirror, token cache, theme, session, legacy detection
     │   └── tmdb.ts                      # TMDB v3 search, details, discover & JustWatch watch providers
     ├── store/
     │   └── LibraryContext.tsx           # App state provider & household/co-watch actions
@@ -53,13 +53,15 @@
 ## Critical Architectural Invariants
 
 1. **Zero Storage / Drive Collisions with BookLibrary**:
-   - All `localStorage` keys use the `movielibrary_` prefix (`movielibrary_db_v1`, `movielibrary_drive_config_v1`, `movielibrary_api_config_v1`, `movielibrary_theme`, `movielibrary_active_profile_v1`).
+   - All `localStorage` / `sessionStorage` keys use the `movielibrary_` prefix (`movielibrary_db`, `movielibrary_drive_config`, `movielibrary_drive_token`, `movielibrary_api_config`, `movielibrary_theme`, `movielibrary_active_profile`, `movielibrary_active_profile_session`).
    - IndexedDB stores use `movielibrary_storage_v1` and `movielibrary_posters_v1`.
    - Google Drive sync filename defaults to `movielibrary-db.json` (while BookLibrary uses `booklibrary-db.json`), allowing the exact same Google OAuth Client ID and shared family Gmail Drive account to host both apps safely.
    - SHA-256 PIN hashing uses `"movielibrary-v1:" + profileId + ":" + pin` domain separation.
 
-2. **Google Drive OAuth Scope Contract**:
+2. **Google Drive OAuth Scope & GIS Reconnect Contract**:
    - `requestDriveAccessToken()` in `src/services/googleDriveSync.ts` MUST request both `https://www.googleapis.com/auth/drive.file` and `https://www.googleapis.com/auth/userinfo.email` so `fetchUserEmail()` succeeds cleanly and falls back to Drive `/drive/v3/about?fields=user(emailAddress)`.
+   - GIS access tokens (~1h TTL) are cached under `movielibrary_drive_token` (`localStorage`, not `sessionStorage`, for iOS Safari PWA persistence) with a 60s expiry buffer (`DRIVE_TOKEN_EXPIRY_BUFFER_MS`) and strict `clientId` matching.
+   - Returning devices pass `prompt: ''` + `hint: userEmail` (`hint` omitted on `'select_account'`), while startup auto-sync waits on `idbHydrated` so background sync never races IndexedDB hydration.
    - Never hardcode Google OAuth Client IDs, TMDB tokens, or OMDb keys in tracked source files. Read defaults from `import.meta.env.VITE_*` or user settings.
 
 3. **Non-Destructive Family Co-Watching (`src/utils/cowatch.ts`)**:
@@ -85,5 +87,5 @@
 ## Verification Status (`v0.1.0`)
 
 - **TypeScript + Production Vite Build**: Verified via `npm run build` (`tsc -b && vite build`).
-- **Vitest Automated Tests**: Verified via `npm test` (15 test files, 36 tests covering admin, analytics, badges, cowatch, crypto, csv, duplicates, googleDriveSync, idbStorage, importExport, merge, pdfReport, progress, stats, and tmdb).
+- **Vitest Automated Tests**: Verified via `npm test` (15 test files, 38 tests covering admin, analytics, badges, cowatch, crypto, csv, duplicates, googleDriveSync, idbStorage, importExport, merge, pdfReport, progress, stats, and tmdb).
 - **CLI Renderer**: Verified via `npm run pdf:cli -- --help`.
